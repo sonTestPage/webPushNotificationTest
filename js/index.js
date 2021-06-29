@@ -22,6 +22,7 @@ const messaging = firebase.messaging();
 // 앱 인스턴스의 현재 등록 토큰을 검색
 navigator.serviceWorker.register('/firebase-messaging-sw.js')
 .then(registration => {
+	messaging.useServiceWorker(registration);
 	messaging.getToken({ vapidKey: 'BG0ZO5wuIf8lTgjjLTCrlzT_QAvwLVNOPVpM4EBcHkDxAWSGxFXd-XzUttW57uJgb8gYO65peyxdN9XfP_ImLcA' }).then((currentToken) => {
 		  if (currentToken) {
 		    // Send the token to your server and update the UI if necessary
