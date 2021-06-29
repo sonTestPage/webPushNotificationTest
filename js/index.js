@@ -20,33 +20,39 @@ const messaging = firebase.messaging();
 });*/
 
 // 앱 인스턴스의 현재 등록 토큰을 검색
-messaging.getToken({ vapidKey: 'BG0ZO5wuIf8lTgjjLTCrlzT_QAvwLVNOPVpM4EBcHkDxAWSGxFXd-XzUttW57uJgb8gYO65peyxdN9XfP_ImLcA' }).then((currentToken) => {
-  if (currentToken) {
-    // Send the token to your server and update the UI if necessary
-    // ...
-  } else {
-    // Show permission request UI
-	  messaging.requestPermission().then(function() {
-		  return messaging.getToken();
-	  })
-	  .then(async function(token){
-		  await fetch('/register', { method: 'post', body: token })
-          messaging.onMessage(payload => {
-              const title = payload.notification.title
-              const options = {
-                  body : payload.notification.body
-              }
-              navigator.serviceWorker.ready.then(registration => {
-                  registration.showNotification(title, options);
-              })
-          })
-	  })
-	  .catch(function(err) {
-		  console.log("Error Occured");
-	  })
-	  
-  }
-}).catch((err) => {
-  console.log('An error occurred while retrieving token. ', err);
-  // ...
-});
+navigator.serviceWorker.register('/firebase-messaging-sw.js')
+.then(registration => {
+	messaging.getToken({ vapidKey: 'BG0ZO5wuIf8lTgjjLTCrlzT_QAvwLVNOPVpM4EBcHkDxAWSGxFXd-XzUttW57uJgb8gYO65peyxdN9XfP_ImLcA' }).then((currentToken) => {
+		  if (currentToken) {
+		    // Send the token to your server and update the UI if necessary
+		    // ...
+		  } else {
+		    // Show permission request UI
+			  messaging.requestPermission().then(function() {
+				  return messaging.getToken();
+			  })
+			  .then(async function(token){
+				  await fetch('/register', { method: 'post', body: token })
+		          messaging.onMessage(payload => {
+		              const title = payload.notification.title
+		              const options = {
+		                  body : payload.notification.body
+		              }
+		              navigator.serviceWorker.ready.then(registration => {
+		                  registration.showNotification(title, options);
+		              })
+		          })
+			  })
+			  .catch(function(err) {
+				  console.log("Error Occured");
+			  })
+			  
+		  }
+		}).catch((err) => {
+		  console.log('An error occurred while retrieving token. ', err);
+		  // ...
+		});
+	
+})
+
+
